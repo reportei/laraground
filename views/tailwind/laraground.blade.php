@@ -10,7 +10,11 @@
 @endsection
 
 @push('styles')
-    <style></style>
+    <style>
+        .h-70 {
+            height: 20rem;
+        }
+    </style>
 @endpush
 
 @push('scripts')

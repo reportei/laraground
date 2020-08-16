@@ -5,20 +5,30 @@ namespace App\Http\Livewire\Laraground;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component;
 use ReflectionClass;
 use ReflectionProperty;
+use ReflectionException;
 
+/**
+ * Class Laraground
+ * @package App\Http\Livewire\Laraground
+ */
 class Laraground extends Component
 {
     public $attributes = [];
     public $components = [];
+    public $componentName = null;
     public $componentView = null;
     public $componentConfig = null;
     public $consoleLogs = [];
     protected $component = null;
     protected $listeners = ['consoleLog' => 'addConsoleLog'];
 
+    /**
+     * @throws \ReflectionException
+     */
     public function mount()
     {
         $classes = [
@@ -61,6 +71,10 @@ class Laraground extends Component
         $this->components = $classes;
     }
 
+    /**
+     * @param $className
+     * @throws ReflectionException
+     */
     public function viewComponent($className)
     {
         $className = str_replace('/', '\\', $className);
@@ -68,6 +82,7 @@ class Laraground extends Component
         $classAsArray = explode('\\', $className);
         $view = optional((object)$class->getDefaultProperties())->lgView ?? 'x-form.' . Str::slug(array_pop($classAsArray));
 
+        $this->componentName = $className;
         $this->component = $class;
         $this->componentView = $view;
         $newAttributes = [];
@@ -85,26 +100,48 @@ class Laraground extends Component
 
         $this->attributes = $newAttributes;
         $this->componentConfig = $className::laraground();
+        if (!isset($this->componentConfig['methods'])) {
+            $this->componentConfig['methods'] = [];
+        }
     }
 
+    /**
+     * @return |null
+     */
     public function getComponent()
     {
         return $this->component;
     }
 
+    /**
+     * @param $message
+     */
     public function addConsoleLog($message)
     {
         $this->consoleLogs[Carbon::now()->format('d/m/Y h:i:s')] = (array)json_decode($message);
     }
 
+    /**
+     * @param $value
+     * @return bool
+     */
     public function isValidJson($value)
     {
         json_decode($value);
         return json_last_error() === JSON_ERROR_NONE;
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function render()
     {
-        return view('vendor.laraground.tailwind.livewire.laraground');
+        $componentBag = new ComponentAttributeBag($this->attributes);
+        if ($this->componentName && count($this->componentConfig['methods'])) {
+            $className = $this->componentName;
+            $componentConfig = $className::laraground();
+            $this->componentConfig['methods'] = $componentConfig['methods'];
+        }
+        return view('vendor.laraground.tailwind.livewire.laraground', compact('componentBag'));
     }
 }

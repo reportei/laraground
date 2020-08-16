@@ -24,7 +24,7 @@
             <div class="p-4">
 
                 @if ($componentView && $componentConfig)
-                    @component($componentView, $componentConfig['attributes'] + ['attributes' => $componentConfig['model'] ? 'wire:model=componentConfig.attributes.' . $componentConfig['model']: ''])
+                    @component($componentView, $componentConfig['methods'] + $componentConfig['attributes'] + ['attributes' => $componentBag->merge($componentConfig['attributes'])])
                         @if (count($componentConfig['slots']))
                             @foreach ($componentConfig['slots'] as $slotName => $slot)
                                 @slot($slotName)
@@ -93,7 +93,7 @@
                      x-cloak>
                     @foreach($consoleLogs as $log)
                         <div class="px-4 py-2 border-b text-xs leading-none">
-                            <pre>{!! count($log) > 1 ? print_r($log, 1) : print_r($log[0]) !!}</pre>
+                            <pre>{!! count($log) > 1 ? print_r($log, 1) : print_r($log[0], 1) !!}</pre>
                         </div>
                         {{--                        <div class="px-4 py-2 border-b text-xs leading-none"><pre>{!! print_r(count($log), 1) !!}</pre></div>--}}
                     @endforeach
