@@ -1,0 +1,38 @@
+{
+    "name": "reportei/laraground",
+    "description": "Laravel components playground",
+    "keywords": ["components", "playground", "laravel", "tailwind", "livewire", "alpine", "alpinejs"],
+    "license": "MIT",
+    "type":    "library",
+    "authors": [
+        {
+            "name": "Guilherme Fontenele",
+            "email": "guilherme@fontenele.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Reportei\\Laraground\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Reportei\\Laraground\\Providers\\LaragroundServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.2.5",
+        "laravel/framework": "^7.0",
+        "livewire/livewire": "^1.3",
+        "illuminate/console": "^7.0",
+        "illuminate/filesystem": "^7.0",
+        "illuminate/support": "^7.0"
+    }
+}
